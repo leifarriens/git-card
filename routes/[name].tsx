@@ -1,17 +1,9 @@
 /** @jsx h */
-import { h } from 'preact';
+import { Fragment, h } from 'preact';
 import { tw } from '@twind';
 import { Handlers, PageProps } from '$fresh/server.ts';
 
-interface User {
-  login: string;
-  name: string;
-  avatar_url: string;
-  bio: string;
-  html_url: string;
-  location: string;
-  blog: string;
-}
+import { User } from '../types/index.ts';
 
 export const handler: Handlers<User | null> = {
   async GET(_, ctx) {
@@ -27,29 +19,45 @@ export const handler: Handlers<User | null> = {
 };
 
 export default function Greet({ data }: PageProps<User | null>) {
-  if (data) {
-    return (
+  return (
+    <div
+      class={tw`relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 dark:bg-slate-800  py-6 sm:py-12`}
+    >
       <div
-        class={tw`relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 dark:bg-slate-800  py-6 sm:py-12`}
+        class={tw`relative bg-white px-6 pt-10 pb-8 shadow-l  sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10`}
       >
-        <div
-          class={tw`relative bg-white px-6 pt-10 pb-8 shadow-l  sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10`}
-        >
-          <h1>{data.login}</h1>
-          <h2>{data.name}</h2>
-          <div>
-            <img class={tw`my-6 rounded-full`} src={data.avatar_url} />
-            <div>{data.bio}</div>
-            <div>{data.html_url}</div>
-            <div>{data.location}</div>
-            <a href={`https://${data.blog}`} target="_blank">
-              {data.blog}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+        {data ? (
+          <Fragment>
+            <head>
+              <title>Git Card | {data.login}</title>
+            </head>
 
-  return null;
+            <h1>{data.login}</h1>
+            <h2>{data.name}</h2>
+            <div>
+              <img
+                class={tw`my-6 rounded-full`}
+                width={432}
+                height={432}
+                src={data.avatar_url}
+              />
+              <div>{data.bio}</div>
+              <div>{data.html_url}</div>
+              <div>{data.location}</div>
+              <a href={`https://${data.blog}`} target="_blank">
+                {data.blog}
+              </a>
+            </div>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <head>
+              <title>Git Card | User not found</title>
+            </head>
+            <div>User not found</div>
+          </Fragment>
+        )}
+      </div>
+    </div>
+  );
 }
