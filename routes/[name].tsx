@@ -4,11 +4,12 @@ import { tw } from '@twind';
 import { Handlers, PageProps } from '$fresh/server.ts';
 
 import { User } from '../types/index.ts';
+import { getUser } from '../services/getUser.ts';
 
 export const handler: Handlers<User | null> = {
   async GET(_, ctx) {
     const { name } = ctx.params;
-    const res = await fetch(`https://api.github.com/users/${name}`);
+    const res = await getUser(name);
     if (res.status === 404) {
       return ctx.render(null);
     }
@@ -24,7 +25,7 @@ export default function Greet({ data }: PageProps<User | null>) {
       class={tw`relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 dark:bg-slate-800  py-6 sm:py-12`}
     >
       <div
-        class={tw`relative bg-white px-6 pt-10 pb-8 shadow-l  sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10`}
+        class={tw`relative bg-white px-6 pt-10 pb-8 shadow-l sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10`}
       >
         {data ? (
           <Fragment>
@@ -42,7 +43,9 @@ export default function Greet({ data }: PageProps<User | null>) {
                 src={data.avatar_url}
               />
               <div>{data.bio}</div>
-              <div>{data.html_url}</div>
+              <a href={data.html_url} target="_blank">
+                Github Profile
+              </a>
               <div>{data.location}</div>
               <a href={`https://${data.blog}`} target="_blank">
                 {data.blog}
